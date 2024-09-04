@@ -211,10 +211,10 @@ export class VaultTransaction {
         address: script_p2tr.address!,
         value: stakingAmount,
       },
-      {
-        script: staking_data_script,
-        value: 0,
-      },
+      // {
+      //   script: staking_data_script,
+      //   value: 0,
+      // },
       {
         script: minting_data_script,
         value: 0,

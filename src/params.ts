@@ -13,16 +13,11 @@ export interface ConfigParams {
     bondHolderAddress: string;
     bondHolderPrivKey?: string;
     bondHolderPublicKey?: string;
+    protocolPrivKey?: string;
     protocolPublicKey?: string;
+    covenantPrivKeys?: string[];
     covenantPublicKeys?: string[];
     covenantQuorum: number;
-    // nodeUrl: string;
-    // indexerUrl: string;
-    // faucetUrl: string;
-    // explorerUrl: string;
-    // covenant: string;
-    // covenantName: string;
-    // covenantAddress: string;
     tag: string;
     version: number;
     destChainId?: string;
@@ -47,8 +42,10 @@ export const globalParams : ConfigParams = {
     bondHolderAddress: process.env.BOND_HOLDER_ADDRESS || '',
     bondHolderPrivKey: process.env.BOND_HOLDER_PRIVATE_KEY,
     bondHolderPublicKey: process.env.BOND_HOLDER_PRIVATE_KEY ? extractPublicKeyFromWIF(process.env.BOND_HOLDER_PRIVATE_KEY, network) : undefined,
-    protocolPublicKey: process.env.PROTOCOL_PUBLIC_KEY,
-    covenantPublicKeys: process.env.COVENANT_PUBLIC_KEYS?.split(','),
+    protocolPrivKey: process.env.PROTOCOL_PRIVATE_KEY,
+    protocolPublicKey: process.env.PROTOCOL_PRIVATE_KEY ? extractPublicKeyFromWIF(process.env.PROTOCOL_PRIVATE_KEY, network) : undefined,
+    covenantPrivKeys: process.env.COVENANT_PRIVKEYS?.split(','),
+    covenantPublicKeys: process.env.COVENANT_PRIVKEYS ? process.env.COVENANT_PRIVKEYS.split(',').map(privKey => extractPublicKeyFromWIF(privKey, network)) : undefined,
     covenantQuorum: parseInt(process.env.COVENANT_QUORUM || '1'),
     tag: process.env.TAG || '01020304',
     version: parseInt(process.env.VERSION || '1'),
