@@ -35,25 +35,25 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
         globalParams.covenantQuorum,
         globalParams.tag,
         globalParams.version,
-        globalParams.destChainId || '1', 
+        globalParams.destChainId || '1',
         globalParams.destUserAddress || '',
         globalParams.destSmartContractAddress || '',
         bondingAmount,
     );
     // --- Get UTXOs
     const regularUTXOs: UTXO[] = await btcClient.getUnspentTransactionOutputs(globalParams.bondHolderAddress);
-    
+
     //const regularUTXOs = await addresses.getAddressTxsUtxo({address: globalParams.bondHolderAddress});
     const { fees } = mempoolClient;
-    const { fastestFee : feeRate } = await fees.getFeesRecommended(); // Get this from Mempool API
+    const { fastestFee: feeRate } = await fees.getFeesRecommended(); // Get this from Mempool API
     const rbf = true; // Replace by fee, need to be true if we want to replace the transaction when the fee is low
     const { psbt: unsignedVaultPsbt, feeEstimate: fee } =
-    await staker.getUnsignedVaultPsbt(
-      regularUTXOs,
-      bondingAmount,
-      feeRate,
-      rbf,
-    );
+        await staker.getUnsignedVaultPsbt(
+            regularUTXOs,
+            bondingAmount,
+            feeRate,
+            rbf,
+        );
     // Simulate signing
     const signedPsbt = psbt.signInputs(
         globalParams.bondHolderPrivKey,
@@ -70,12 +70,22 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
 }
 
 const bondingAmount = 10000; // in satoshis
-createBondingTransaction(bondingAmount)
-    .then(async ({ hexTxfromPsbt, fee }) => {
-        console.log(`Signed Tx in Hex: ${hexTxfromPsbt} with estimate fee ${fee}`); // log it for the unbonding.ts
-        const testRes = await btcClient.rpcClient.command("testmempoolaccept", [hexTxfromPsbt]);
-        console.log(testRes);
-        return btcClient.sendrawtransaction(hexTxfromPsbt);
-}).then((txid) => {
-        console.log(`Transaction ID: ${txid}`);
-}).catch((error) => { console.error(error); });
+const numberTxs = 2;
+async function multiCreateBondingTransaction() {
+    for (let i = 0; i < numberTxs; i++) {
+        // Create a bonding transaction
+        await createBondingTransaction(bondingAmount + Math.round(bondingAmount * i * 0.1))
+            .then(async ({ hexTxfromPsbt, fee }) => {
+                console.log(`Signed Tx in Hex: ${hexTxfromPsbt} with estimated fee ${fee}`);
+                const testRes = await btcClient.rpcClient.command("testmempoolaccept", [hexTxfromPsbt]);
+                console.log(testRes);
+                return btcClient.sendrawtransaction(hexTxfromPsbt);
+            }).then((txid) => {
+                console.log(`Transaction ID: ${txid}`);
+            }).catch((error) => {
+                console.error(error);
+            });
+    }
+}
+
+multiCreateBondingTransaction();
