@@ -1,3 +1,4 @@
+import { btcClient, mempoolClient } from "../client";
 import * as ecc from "@bitcoinerlab/secp256k1";
 import * as bitcoin from "bitcoinjs-lib";
 import { Network, Psbt } from "bitcoinjs-lib";
@@ -5,12 +6,21 @@ import { tapTweakHash } from "bitcoinjs-lib/src/payments/bip341";
 import { isTaprootInput, toXOnly } from "bitcoinjs-lib/src/psbt/bip371";
 import bs58check from "bs58check";
 import { ECPairFactory, ECPairInterface } from "ecpair";
-import { logToJSON } from "./log";
 import { UTXO } from "../types/utxo";
+import { AddressTxsUtxo } from "@mempool/mempool.js/lib/interfaces/bitcoin/addresses";
 
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
 
+export async function getAddressUtxos(address: string): Promise<AddressTxsUtxo[]> {
+  //First try get utxo from bitcoin node
+  let utxos: AddressTxsUtxo[] = await btcClient.getUnspentTransactionOutputs(address);
+  //Then try get utxo from mempool
+  if (utxos.length == 0) {
+    utxos = await mempoolClient.addresses.getAddressTxsUtxo({ address });
+  }
+  return utxos;
+}
 export enum AddressType {
   P2PKH,
   P2WPKH,
