@@ -1,7 +1,8 @@
 
 import Client from "bitcoin-core-ts";
 import { globalParams } from "../params";
-import { UTXO, BtcUnspent } from "../types/utxo";
+import { BtcUnspent } from "../types/utxo";
+import { AddressTxsUtxo } from "@mempool/mempool.js/lib/interfaces/bitcoin/addresses";
 
 export const client = new Client({
     network: globalParams.networkName,
@@ -12,9 +13,9 @@ export const client = new Client({
     password: globalParams.btcRpcPassword
 });
 
-export const getUnspentTransactionOutputs = async (address: string) : Promise<UTXO[]> => {
+export const getUnspentTransactionOutputs = async (address: string) : Promise<AddressTxsUtxo[]> => {
     const listUnspent: BtcUnspent[] = await client.command("listunspent", 0, 9999999, [address]);
-    const mempoolUtxos: UTXO[] = listUnspent.map((utxo: BtcUnspent) => {
+    const mempoolUtxos: AddressTxsUtxo[] = listUnspent.map((utxo: BtcUnspent) => {
         return {
             txid: utxo.txid,
             vout: utxo.vout,

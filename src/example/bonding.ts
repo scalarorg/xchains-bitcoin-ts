@@ -1,8 +1,10 @@
+import { AddressTxsUtxo } from "@mempool/mempool.js/lib/interfaces/bitcoin/addresses";
 import { btcClient, mempoolClient } from "../client";
 import * as vault from "../index";
 import { globalParams } from "../params";
 import { UTXO } from "../types/utxo";
 import { logToJSON, psbt } from "../utils"
+import { getAddressUtxos } from "../utils/bitcoin";
 /*
  *  bondingAmount in shatoshi
  *  mintingAmount consider equal to bondingAmount
@@ -27,6 +29,9 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
         throw new Error('Covenant public keys are not provided');
     }
     logToJSON(globalParams);
+    // const stakerPubKey = "032b122fd36a9db2698c39fb47df3e3fa615e70e368acb874ec5494e4236722b2d";
+    // const stakerPrivKey = "cUKxQGWboxiXBW3iXQ9pTzwCdMK7Un9mdLeDKepZkdVf5V7JNd9a"
+    // const bondHolderPublicKey = "032b122fd36a9db2698c39fb47df3e3fa615e70e368acb874ec5494e4236722b2d";
     const staker = new vault.Staker(
         globalParams.bondHolderAddress,
         globalParams.bondHolderPublicKey,
@@ -41,8 +46,12 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
         bondingAmount,
     );
     // --- Get UTXOs
-    const regularUTXOs: UTXO[] = await btcClient.getUnspentTransactionOutputs(globalParams.bondHolderAddress);
-    
+
+    const addressUtxo: AddressTxsUtxo[] = await getAddressUtxos(globalParams.bondHolderAddress);
+    const regularUTXOs: UTXO[] = addressUtxo.map(({ txid, vout, status, value }: AddressTxsUtxo) => ({
+        txid, vout, value,
+        status: { block_hash: status.block_hash, block_height: status.block_height, block_time: status.block_time, confirmed: status.confirmed }    
+    }));
     //const regularUTXOs = await addresses.getAddressTxsUtxo({address: globalParams.bondHolderAddress});
     const { fees } = mempoolClient;
     const { fastestFee : feeRate } = await fees.getFeesRecommended(); // Get this from Mempool API
@@ -53,7 +62,8 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
       bondingAmount,
       feeRate,
       rbf,
-    );
+        );
+    console.log(unsignedVaultPsbt);
     // Simulate signing
     const signedPsbt = psbt.signInputs(
         globalParams.bondHolderPrivKey,
