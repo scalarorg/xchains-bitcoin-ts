@@ -79,12 +79,10 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
     };
 }
 
-const bondingAmount = 10000; // in satoshis
-const numberTxs = 2;
-async function multiCreateBondingTransaction() {
+async function createBondingTransactions(bondingAmount: number, numberTxs: number) {
     for (let i = 0; i < numberTxs; i++) {
         // Create a bonding transaction
-        await createBondingTransaction(bondingAmount + Math.round(bondingAmount * i * 0.1))
+        await createBondingTransaction(bondingAmount + Math.min(1000, Math.ceil(bondingAmount * i * 0.1)))
             .then(async ({ hexTxfromPsbt, fee }) => {
                 console.log(`Signed Tx in Hex: ${hexTxfromPsbt} with estimated fee ${fee}`);
                 const testRes = await btcClient.rpcClient.command("testmempoolaccept", [hexTxfromPsbt]);
@@ -98,4 +96,7 @@ async function multiCreateBondingTransaction() {
     }
 }
 
-multiCreateBondingTransaction();
+const bondingAmount = 10000; // in satoshis
+const numberTxs = 2;
+
+createBondingTransactions(bondingAmount, numberTxs);
