@@ -16,6 +16,7 @@ import { TxInstance } from '@mempool/mempool.js/lib/interfaces/bitcoin/transacti
 import { WsInstance } from '@mempool/mempool.js/lib/interfaces/bitcoin/websockets';
 
 export type BtcMempoolInstance = {
+    config: AxiosRequestConfig;
     addresses: AddressInstance;
     blocks: BlockInstance;
     difficulty: DifficultyInstance;
@@ -29,6 +30,7 @@ const config: AxiosRequestConfig = {
 
 let api = axios.create(config);
 export const btcMempoolInstance: BtcMempoolInstance = {
+    config,
     addresses: useAddresses(api),
     blocks: useBlocks(api),
     difficulty: useDifficulty(api),

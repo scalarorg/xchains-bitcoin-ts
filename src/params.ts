@@ -1,5 +1,4 @@
 import * as bitcoin from "bitcoinjs-lib";
-import { networkInterfaces } from "os";
 import { extractPublicKeyFromWIF } from "./utils";
 export interface ConfigParams {
     networkName: string;
