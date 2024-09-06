@@ -4,7 +4,7 @@ import { globalParams } from "../params";
 import { BtcUnspent } from "../types/utxo";
 import { AddressTxsUtxo } from "@mempool/mempool.js/lib/interfaces/bitcoin/addresses";
 
-export const client = new Client({
+export const defaultClient = new Client({
     network: globalParams.networkName,
     host: globalParams.btcHost,
     port: globalParams.btcPort,
@@ -13,7 +13,8 @@ export const client = new Client({
     password: globalParams.btcRpcPassword
 });
 
-export const getUnspentTransactionOutputs = async (address: string) : Promise<AddressTxsUtxo[]> => {
+export const getUnspentTransactionOutputs = async (address: string, btcClient?: Client): Promise<AddressTxsUtxo[]> => {
+    const client = btcClient || defaultClient;
     const listUnspent: BtcUnspent[] = await client.command("listunspent", 0, 9999999, [address]);
     const mempoolUtxos: AddressTxsUtxo[] = listUnspent.map((utxo: BtcUnspent) => {
         return {
@@ -32,12 +33,13 @@ export const getUnspentTransactionOutputs = async (address: string) : Promise<Ad
     return mempoolUtxos;
 }
 
-export const sendrawtransaction = async (hex: string): Promise<string> => {
+export const sendrawtransaction = async (hex: string, btcClient?: Client): Promise<string> => {
+    const client = btcClient || defaultClient;
     const txid = await client.command("sendrawtransaction", hex);
     return txid;
 }
 const btcNodeClient = {
-    rpcClient: client,
+    rpcClient: defaultClient,
     sendrawtransaction,
     getUnspentTransactionOutputs
 };
