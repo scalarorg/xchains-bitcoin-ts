@@ -15,7 +15,7 @@ import { FeeInstance } from '@mempool/mempool.js/lib/interfaces/bitcoin/fees';
 import { TxInstance } from '@mempool/mempool.js/lib/interfaces/bitcoin/transactions';
 import { WsInstance } from '@mempool/mempool.js/lib/interfaces/bitcoin/websockets';
 
-export type BtcMempoolInstance = {
+declare class BtcMempool {
     config: AxiosRequestConfig;
     addresses: AddressInstance;
     blocks: BlockInstance;
@@ -23,18 +23,43 @@ export type BtcMempoolInstance = {
     fees: FeeInstance;
     mempool: MempoolInstance;
     transactions: TxInstance;
+    constructor(mempoolUrl: string);
 }
-const config: AxiosRequestConfig = {
-    baseURL: globalParams.mempoolUrl || 'https://mempool.space/api',
-};
 
-let api = axios.create(config);
-export const btcMempoolInstance: BtcMempoolInstance = {
-    config,
-    addresses: useAddresses(api),
-    blocks: useBlocks(api),
-    difficulty: useDifficulty(api),
-    fees: useFees(api),
-    mempool: useMempool(api),
-    transactions: useTransactions(api),
+BtcMempool.prototype.constructor = function (mempoolUrl: string) {
+    this.config = {
+        baseURL: mempoolUrl,
+    };
+    let api = axios.create(this.config);
+    this.addresses = useAddresses(api);
+    this.blocks = useBlocks(api);
+    this.difficulty = useDifficulty(api);
+    this.fees = useFees(api);
+    this.mempool = useMempool(api);
+    this.transactions = useTransactions(api);
 };
+export default BtcMempool
+
+// export type BtcMempoolInstance = {
+//     config: AxiosRequestConfig;
+//     addresses: AddressInstance;
+//     blocks: BlockInstance;
+//     difficulty: DifficultyInstance;
+//     fees: FeeInstance;
+//     mempool: MempoolInstance;
+//     transactions: TxInstance;
+// }
+// const config: AxiosRequestConfig = {
+//     baseURL: globalParams.mempoolUrl || 'https://mempool.space/api',
+// };
+
+// let api = axios.create(config);
+// export const btcMempoolInstance: BtcMempoolInstance = {
+//     config,
+//     addresses: useAddresses(api),
+//     blocks: useBlocks(api),
+//     difficulty: useDifficulty(api),
+//     fees: useFees(api),
+//     mempool: useMempool(api),
+//     transactions: useTransactions(api),
+// };

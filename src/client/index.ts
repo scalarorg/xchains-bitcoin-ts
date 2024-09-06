@@ -1,3 +1,6 @@
-export { default as btcClient }  from './bitcoin';
-export { btcMempoolInstance as mempoolClient } from './mempool';
-export type { BtcMempoolInstance } from './mempool';
+import { globalParams } from '../params';
+import { default as BtcMempool } from './mempool';
+
+export { default as btcClient } from './bitcoin';
+export { BtcMempool };
+export const mempoolClient = new BtcMempool(globalParams.mempoolUrl || 'https://mempool.space/api');
