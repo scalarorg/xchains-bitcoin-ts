@@ -28,7 +28,6 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
     if (!globalParams.covenantPublicKeys) {
         throw new Error('Covenant public keys are not provided');
     }
-    logToJSON(globalParams);
     // const stakerPubKey = "032b122fd36a9db2698c39fb47df3e3fa615e70e368acb874ec5494e4236722b2d";
     // const stakerPrivKey = "cUKxQGWboxiXBW3iXQ9pTzwCdMK7Un9mdLeDKepZkdVf5V7JNd9a"
     // const bondHolderPublicKey = "032b122fd36a9db2698c39fb47df3e3fa615e70e368acb874ec5494e4236722b2d";
@@ -98,5 +97,5 @@ async function createBondingTransactions(bondingAmount: number, numberTxs: numbe
 
 const bondingAmount = 10000; // in satoshis
 const numberTxs = 2;
-
+logToJSON(globalParams);
 createBondingTransactions(bondingAmount, numberTxs);

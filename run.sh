@@ -8,6 +8,7 @@ copy_env() {
 }
 
 bonding() {
+    copy_env
     npm run bonding
 }
 
