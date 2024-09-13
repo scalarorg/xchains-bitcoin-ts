@@ -29,6 +29,10 @@ if (process.env.NETWORK === "testnet") {
 } else if (process.env.NETWORK === "mainnet") {
     network = bitcoin.networks.bitcoin;
 } 
+let destChainId = Number(process.env.DEST_CHAIN_ID || '').toString(16);
+if (destChainId.length % 2) {
+    destChainId = '0' + destChainId;
+}   
 export const globalParams : ConfigParams = {
     networkName: process.env.NETWORK || 'regtest',
     network: network,
@@ -48,7 +52,7 @@ export const globalParams : ConfigParams = {
     covenantQuorum: parseInt(process.env.COVENANT_QUORUM || '1'),
     tag: process.env.TAG || '01020304',
     version: parseInt(process.env.VERSION || '1'),
-    destChainId: process.env.DEST_CHAIN_ID || '',
+    destChainId,
     destUserAddress: process.env.DEST_USER_ADDRESS || '',
     destSmartContractAddress: process.env.DEST_SMART_CONTRACT_ADDRESS || '',
 };
