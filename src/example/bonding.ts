@@ -5,6 +5,7 @@ import { globalParams } from "../params";
 import { UTXO } from "../types/utxo";
 import { logToJSON, psbt } from "../utils"
 import { getAddressUtxos } from "../utils/bitcoin";
+import { getDefaultEthAddress } from "./utils";
 /*
  *  bondingAmount in shatoshi
  *  mintingAmount consider equal to bondingAmount
@@ -31,6 +32,8 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
     // const stakerPubKey = "032b122fd36a9db2698c39fb47df3e3fa615e70e368acb874ec5494e4236722b2d";
     // const stakerPrivKey = "cUKxQGWboxiXBW3iXQ9pTzwCdMK7Un9mdLeDKepZkdVf5V7JNd9a"
     // const bondHolderPublicKey = "032b122fd36a9db2698c39fb47df3e3fa615e70e368acb874ec5494e4236722b2d";
+    const userAddress = globalParams.destUserAddress || getDefaultEthAddress();
+    console.log(`User Address: ${userAddress}`);
     const staker = new vault.Staker(
         globalParams.bondHolderAddress,
         globalParams.bondHolderPublicKey,
@@ -40,7 +43,7 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
         globalParams.tag,
         globalParams.version,
         globalParams.destChainId || '1',
-        globalParams.destUserAddress || '',
+        userAddress,
         globalParams.destSmartContractAddress || '',
         bondingAmount,
     );

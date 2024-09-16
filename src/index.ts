@@ -182,14 +182,14 @@ export class Staker {
       throw new Error("Invalid chainID");
     }
     const chainIdUserAddressBuffer = Buffer.from(
-      this.#chainIdUserAddress,
+      this.#chainIdUserAddress.startsWith("0x") ? this.#chainIdUserAddress.slice(2) : this.#chainIdUserAddress,
       "hex",
     );
     if (chainIdUserAddressBuffer.length !== 20) {
       throw new Error("Invalid chainIdUserAddress");
     }
     const chainSmartContractAddressBuffer = Buffer.from(
-      this.#chainSmartContractAddress,
+      this.#chainSmartContractAddress.startsWith("0x") ? this.#chainSmartContractAddress.slice(2) : this.#chainSmartContractAddress,
       "hex",
     );
     if (chainSmartContractAddressBuffer.length !== 20) {
