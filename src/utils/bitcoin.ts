@@ -571,7 +571,13 @@ export function getAddressType(address: string): [AddressType, Network] {
   // regtest
   else if (address.startsWith("bcrt1q")) {
     return [AddressType.P2WPKH, bitcoin.networks.regtest];
-  }
+  } else if (address.startsWith("m") || address.startsWith("n")) {
+    return [AddressType.P2PKH, bitcoin.networks.regtest];
+  } else if (address.startsWith("2")) {
+    return [AddressType.P2SH_P2WPKH, bitcoin.networks.regtest];
+  } else if (address.startsWith("bcrt1p")) {
+    return [AddressType.P2TR, bitcoin.networks.regtest];
+  } 
   throw new Error(`Unknown address: ${address}`);
 }
 

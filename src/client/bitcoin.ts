@@ -15,12 +15,12 @@ export const defaultClient = new Client({
 
 export const getUnspentTransactionOutputs = async (address: string, btcClient?: Client): Promise<AddressTxsUtxo[]> => {
     const client = btcClient || defaultClient;
-    const listUnspent: BtcUnspent[] = await client.command("listunspent", 0, 9999999, [address]);
+    const listUnspent: BtcUnspent[] = await client.command("listunspent", 1, 9999999, [address], true, {"minimumAmount": 1/100000});
     const mempoolUtxos: AddressTxsUtxo[] = listUnspent.map((utxo: BtcUnspent) => {
         return {
             txid: utxo.txid,
             vout: utxo.vout,
-            value: utxo.amount * 100000000, // convert to satoshis
+            value: Math.round(utxo.amount * 100000000), // convert to satoshis
             confirmations: utxo.confirmations,
             status: {
                 confirmed: utxo.confirmations > 0,
