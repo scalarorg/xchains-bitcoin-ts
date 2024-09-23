@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "bonding": "npx ts-node -r dotenv/config src/example/bonding.ts",
+    "unbondingService": "npx ts-node -r dotenv/config src/example/unbondingService.ts",
     "test": "jest",
     "build": "tsc",
     "publish-lib": "npm run build && npm publish",
