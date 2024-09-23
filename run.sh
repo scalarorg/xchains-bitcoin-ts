@@ -33,4 +33,10 @@ bonding() {
     npm run bonding
 }
 
+unbondingService() {
+    NETWORK=${1:-ethereum-local}
+    copy_env $NETWORK
+    npm run unbondingService
+}
+
 $@
