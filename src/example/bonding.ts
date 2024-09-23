@@ -5,12 +5,12 @@ import { globalParams } from "../params";
 import { UTXO } from "../types/utxo";
 import { logToJSON, psbt } from "../utils"
 import { getAddressUtxos } from "../utils/bitcoin";
-import { getDefaultEthAddress } from "./utils";
+import { getDefaultEthAddress, getDestProtocolAddress } from "./utils";
 /*
  *  bondingAmount in shatoshi
  *  mintingAmount consider equal to bondingAmount
 */
-async function createBondingTransaction(bondingAmount: number): Promise<{
+async function createBondingTransaction(destNetwork: string, bondingAmount: number): Promise<{
     hexTxfromPsbt: string;
     fee: number;
 }> {
@@ -44,7 +44,7 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
         globalParams.version,
         globalParams.destChainId || '1',
         userAddress,
-        globalParams.destSmartContractAddress || '',
+        globalParams.destSmartContractAddress || getDestProtocolAddress(destNetwork),
         bondingAmount,
     );
     // --- Get UTXOs
@@ -81,10 +81,10 @@ async function createBondingTransaction(bondingAmount: number): Promise<{
     };
 }
 
-async function createBondingTransactions(bondingAmount: number, numberTxs: number) {
+async function createBondingTransactions(destNetwork: string, bondingAmount: number, numberTxs: number) {
     for (let i = 0; i < numberTxs; i++) {
         // Create a bonding transaction
-        await createBondingTransaction(bondingAmount + Math.min(1000, Math.ceil(bondingAmount * i * 0.1)))
+        await createBondingTransaction(destNetwork, bondingAmount + Math.min(1000, Math.ceil(bondingAmount * i * 0.1)))
             .then(async ({ hexTxfromPsbt, fee }) => {
                 console.log(`Signed Tx in Hex: ${hexTxfromPsbt} with estimated fee ${fee}`);
                 const testRes = await btcClient.rpcClient.command("testmempoolaccept", [hexTxfromPsbt]);
@@ -100,5 +100,6 @@ async function createBondingTransactions(bondingAmount: number, numberTxs: numbe
 
 const bondingAmount = 10000; // in satoshis
 const numberTxs = 2;
+const destNetwork = "ethereum-local"
 logToJSON(globalParams);
-createBondingTransactions(bondingAmount, numberTxs);
+createBondingTransactions(destNetwork, bondingAmount, numberTxs);
