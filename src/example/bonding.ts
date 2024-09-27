@@ -99,7 +99,7 @@ async function createBondingTransactions(destNetwork: string, bondingAmount: num
 }
 
 const bondingAmount = 10000; // in satoshis
-const numberTxs = 2;
+const numberTxs = 5;
 const destNetwork = "ethereum-local"
 logToJSON(globalParams);
 createBondingTransactions(destNetwork, bondingAmount, numberTxs);
