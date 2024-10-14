@@ -9,8 +9,9 @@
     "strict": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "declaration": true
+    "declaration": true,
+    "types": ["bun-types"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/demo_test.ts"]
+  "include": ["src/**/*.ts", "**/*.test.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -39,7 +39,7 @@ export class Staker {
     chainID: string,
     chainIdUserAddress: string,
     chainSmartContractAddress: string,
-    mintingAmount: number,
+    mintingAmount: number
   ) {
     this.#stakerAddress = stakerAddress;
     this.#stakerPubkey = stakerPubkey;
@@ -58,7 +58,7 @@ export class Staker {
     btcUtxos: UTXO[],
     stakingAmount: number,
     feeRate: number,
-    rbf: boolean,
+    rbf: boolean
   ): Promise<{ psbt: bitcoin.Psbt; feeEstimate: number }> {
     // Need to check the validity of the stakingAmount and mintingAmount
     if (this.#mintingAmount > stakingAmount) {
@@ -78,7 +78,7 @@ export class Staker {
     signedVaultTransactionHex: string,
     burnAddress: string,
     feeRate: number,
-    rbf: boolean,
+    rbf: boolean
   ): Promise<{ psbt: bitcoin.Psbt; feeEstimate: number; burningLeaf: Leaf }> {
     const staker = await this.getStaker();
     const tapLeaves = await staker.getTapLeavesScript();
@@ -95,7 +95,7 @@ export class Staker {
     signedVaultPsbtHex: string,
     burnAddress: string,
     feeRate: number,
-    rbf: boolean,
+    rbf: boolean
   ): Promise<{ psbt: bitcoin.Psbt; feeEstimate: number; SolLeaf: Leaf }> {
     const staker = await this.getStaker();
     const tapLeaves = await staker.getTapLeavesScript();
@@ -112,7 +112,7 @@ export class Staker {
     signedVaultPsbtHex: string,
     burnAddress: string,
     feeRate: number,
-    rbf: boolean,
+    rbf: boolean
   ): Promise<{ psbt: bitcoin.Psbt; feeEstimate: number; BWoD: Leaf }> {
     const staker = await this.getStaker();
     const tapLeaves = await staker.getTapLeavesScript();
@@ -153,7 +153,7 @@ export class Staker {
       throw new Error("Invalid protocol pubkey");
     }
     const covenantPubkeyBuffer = this.#covenantPubkey.map((v) =>
-      Buffer.from(v, "hex"),
+      Buffer.from(v, "hex")
     );
     for (let i = 0; i < covenantPubkeyBuffer.length; i++) {
       if (covenantPubkeyBuffer[i].length !== 33) {
@@ -182,15 +182,19 @@ export class Staker {
       throw new Error("Invalid chainID");
     }
     const chainIdUserAddressBuffer = Buffer.from(
-      this.#chainIdUserAddress.startsWith("0x") ? this.#chainIdUserAddress.slice(2) : this.#chainIdUserAddress,
-      "hex",
+      this.#chainIdUserAddress.startsWith("0x")
+        ? this.#chainIdUserAddress.slice(2)
+        : this.#chainIdUserAddress,
+      "hex"
     );
     if (chainIdUserAddressBuffer.length !== 20) {
       throw new Error("Invalid chainIdUserAddress");
     }
     const chainSmartContractAddressBuffer = Buffer.from(
-      this.#chainSmartContractAddress.startsWith("0x") ? this.#chainSmartContractAddress.slice(2) : this.#chainSmartContractAddress,
-      "hex",
+      this.#chainSmartContractAddress.startsWith("0x")
+        ? this.#chainSmartContractAddress.slice(2)
+        : this.#chainSmartContractAddress,
+      "hex"
     );
     if (chainSmartContractAddressBuffer.length !== 20) {
       throw new Error("Invalid chainSmartContractAddress");
@@ -213,7 +217,7 @@ export class Staker {
       chainIdUserAddressBuffer,
       chainSmartContractAddressBuffer,
       mintingAmountBuffer,
-      networkType,
+      networkType
     );
   }
 }
@@ -227,7 +231,7 @@ export class UnStaker {
     stakerAddress: string,
     vaultTransactionHex: string,
     covenantPubkey: string[],
-    qorum: number,
+    qorum: number
   ) {
     this.#stakerAddress = stakerAddress;
     this.#vaultTransactionHex = vaultTransactionHex;
@@ -237,7 +241,7 @@ export class UnStaker {
   async getUnsignedBurningPsbt(
     burnAddress: string,
     feeRate: number,
-    rbf: boolean,
+    rbf: boolean
   ): Promise<{ psbt: bitcoin.Psbt; feeEstimate: number; burningLeaf: Leaf }> {
     const staker = await this.getStaker();
     const tapLeaves = await staker.getTapLeavesScript();
@@ -253,7 +257,7 @@ export class UnStaker {
   async getUnsignedSlashingOrLostKeyPsbt(
     burnAddress: string,
     feeRate: number,
-    rbf: boolean,
+    rbf: boolean
   ): Promise<{ psbt: bitcoin.Psbt; feeEstimate: number; SolLeaf: Leaf }> {
     const staker = await this.getStaker();
     const tapLeaves = await staker.getTapLeavesScript();
@@ -269,7 +273,7 @@ export class UnStaker {
   async getUnsignedBurnWithoutDAppPsbt(
     burnAddress: string,
     feeRate: number,
-    rbf: boolean,
+    rbf: boolean
   ): Promise<{ psbt: bitcoin.Psbt; feeEstimate: number; BWoD: Leaf }> {
     const staker = await this.getStaker();
     const tapLeaves = await staker.getTapLeavesScript();
@@ -284,7 +288,7 @@ export class UnStaker {
 
   async getStaker(): Promise<unsignedTransaction.VaultTransaction> {
     const vaultTransaction = bitcoin.Transaction.fromHex(
-      this.#vaultTransactionHex,
+      this.#vaultTransactionHex
     );
 
     const stakingData = vaultTransaction.outs[1].script;
@@ -294,7 +298,7 @@ export class UnStaker {
       Buffer.alloc(1),
       stakingData.subarray(
         opCodeLength + tagLength + versionLength,
-        opCodeLength + tagLength + versionLength + BtcXOnlyPubkeyLength,
+        opCodeLength + tagLength + versionLength + BtcXOnlyPubkeyLength
       ),
     ]);
     if (StakerPubkeyBuffer.length !== 33) {
@@ -305,7 +309,7 @@ export class UnStaker {
       Buffer.alloc(1),
       stakingData.subarray(
         opCodeLength + tagLength + versionLength + BtcXOnlyPubkeyLength,
-        opCodeLength + tagLength + versionLength + BtcXOnlyPubkeyLength * 2,
+        opCodeLength + tagLength + versionLength + BtcXOnlyPubkeyLength * 2
       ),
     ]);
     if (ProtocolPubkeyBuffer.length !== 33) {
@@ -313,7 +317,7 @@ export class UnStaker {
     }
 
     const covenantPubkeyBuffer = this.#covenantPubkey.map((v) =>
-      Buffer.from(v, "hex"),
+      Buffer.from(v, "hex")
     );
     for (let i = 0; i < covenantPubkeyBuffer.length; i++) {
       if (covenantPubkeyBuffer[i].length !== 33) {
@@ -337,7 +341,7 @@ export class UnStaker {
       Buffer.alloc(EthAddressLength),
       Buffer.alloc(EthAddressLength),
       Buffer.alloc(0),
-      networkType,
+      networkType
     );
   }
 }
