@@ -58,9 +58,20 @@ export const sendrawtransaction = async (
   const txid = await client.command("sendrawtransaction", hex);
   return txid;
 };
+
+export const testmempoolaccept = async (
+  hex: string,
+  btcClient?: Client
+): Promise<string> => {
+  const client = btcClient || defaultClient;
+  const txid = await client.command("testmempoolaccept", [hex]);
+  return txid;
+};
+
 const btcNodeClient = {
   rpcClient: defaultClient,
   sendrawtransaction,
+  testmempoolaccept,
   getUnspentTransactionOutputs,
 };
 

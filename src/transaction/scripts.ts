@@ -51,8 +51,8 @@ export class StakerScript {
   }
   slashingOrLostKeyScript(): Buffer {
     const slashingOrLostKeyScriptASM = [
-      toXOnly(this.#stakerPubKey),
-      bitcoin.opcodes.OP_CHECKSIGVERIFY,
+      // toXOnly(this.#stakerPubKey),
+      // bitcoin.opcodes.OP_CHECKSIGVERIFY,
       toXOnly(this.#protocolPubkey),
       bitcoin.opcodes.OP_CHECKSIGVERIFY,
     ];

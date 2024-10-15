@@ -203,9 +203,11 @@ export class VaultTransaction {
     feeEstimate: number;
   }> {
     const script_p2tr = await this.getScriptP2TR();
+
     const embeddedScript = await this.getEmbeddedScript();
     const staking_data_script = embeddedScript.stakingDataScript;
     const minting_data_script = embeddedScript.mintingDataScript;
+    
     const outputs = [
       {
         address: script_p2tr.address!,
@@ -313,21 +315,23 @@ export class VaultTransaction {
     txb.setVersion(2);
     txb.setLocktime(0);
 
+
     const preUTXO = bitcoin.Transaction.fromHex(preUtxoHex);
     const tapLeavesScript = await this.getTapLeavesScript();
 
+    
     let sequence = 0xffffffff;
     if (rbf) {
       sequence = 0xfffffffd;
     }
-
+    
     const fee = await this.getFeeEstimateSlashingOrLostKey({
       preUtxoHex,
       burnAddress,
       feeRate,
       rbf,
     });
-
+    
     txb.addInputs([
       {
         hash: preUTXO.getId(),
@@ -550,6 +554,7 @@ export class VaultTransaction {
       sequence = 0xfffffffd;
     }
 
+
     txb.addInput({
       hash: preUTXO.getId(),
       index: 0, // Index of the output in the previous transaction
@@ -567,7 +572,7 @@ export class VaultTransaction {
         value: preUTXO.outs[0].value, // Amount in satoshis
       },
     ]);
-    txb.signInput(0, random_staker_keyPair);
+    // txb.signInput(0, random_staker_keyPair);
     txb.signInput(0, random_protocol_keyPair);
     for (let i = 0; i < random_covenant_keyPair.length; i++) {
       txb.signInput(0, random_covenant_keyPair[i]);
