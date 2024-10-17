@@ -3,7 +3,7 @@ import { mempoolClient } from "../client";
 import { globalParams } from "../params";
 import { ECPair } from "../utils";
 
-export const feeRate = 1;
+export const feeRate = 200;
 export const rbf = true;
 
 const maxRetries = 10;
