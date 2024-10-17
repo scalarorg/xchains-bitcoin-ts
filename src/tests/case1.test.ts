@@ -46,7 +46,7 @@ async function burning(txHex: string) {
 }
 
 // 0.95682505 tBTC
-const txid = "097c55940aaf7eb823b519de1bc941548e29577a877812fd48b6cefbe896d05a";
+const txid = "f0a4958d4a824b41d13489bcd94712272244c6400c4fd835c76b74b2893fdd5c";
 
 describe("test burn tx with user and protocol", async () => {
   await ensureExists(txid);
