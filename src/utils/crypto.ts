@@ -1,4 +1,4 @@
-import { bitcoin } from "@unisat/wallet-sdk/lib/bitcoin-core";
+import * as bitcoin from "bitcoinjs-lib";
 import ECPairFactory from "ecpair";
 import * as ecc from "@bitcoinerlab/secp256k1";
 // import * as ecc2 from "tiny-secp256k1";
